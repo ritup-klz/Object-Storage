@@ -46,7 +46,7 @@ func ZapLogger(logger *zap.Logger, logBody bool) gin.HandlerFunc {
 						}
 					}
 				}
-				// NOTE: Multipart form does not need to reset c.Request.Body
+				
 			default:
 				body = fmt.Sprintf("[binary content type skipped: %s]", contentType)
 			}
