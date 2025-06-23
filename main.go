@@ -22,9 +22,6 @@ func main() {
 
 	r := gin.Default()
 
-	// logger, _ := zap.NewProduction()
-	// defer logger.Sync()
-
 	//logger middleware-with log rotation
 	zapLoggerR := middleware.NewZapLogger()
 	r.Use(middleware.ZapLogger(zapLoggerR, true))
