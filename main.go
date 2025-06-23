@@ -25,7 +25,7 @@ func main() {
 	// logger, _ := zap.NewProduction()
 	// defer logger.Sync()
 
-	// Attach logger middleware
+	//logger middleware-with log rotation
 	zapLoggerR := middleware.NewZapLogger()
 	r.Use(middleware.ZapLogger(zapLoggerR, true))
 
