@@ -1,0 +1,18 @@
+s3:
+  endpoint: "localhost:9000"
+  accessKey: "minioadmin"
+  secretKey: "minioadmin"
+  region: "us-east-1"
+  useSSL: false
+
+
+
+
+
+
+# s3:
+#   endpoint: "http://noobaa-s3.noobaa.svc:80"
+#   accessKey: "NOOBAA_ACCESS_KEY"
+#   secretKey: "NOOBAA_SECRET_KEY"
+#   region: "us-east-1"
+#   useSSL: false

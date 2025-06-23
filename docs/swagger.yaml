@@ -1,0 +1,288 @@
+basePath: /
+definitions:
+  models.BucketResponseC:
+    properties:
+      bucket:
+        example: mybucket
+        type: string
+      message:
+        example: Bucket created
+        type: string
+    type: object
+  models.BucketResponseD:
+    properties:
+      bucket:
+        example: mybucket
+        type: string
+      message:
+        example: Bucket deleted
+        type: string
+    type: object
+  models.CreateBucketRequest:
+    properties:
+      bucketName:
+        example: mybucket
+        type: string
+    type: object
+  models.DeleteObjectResponse:
+    properties:
+      bucket:
+        example: mybucket
+        type: string
+      file:
+        example: file.txt
+        type: string
+      message:
+        example: File deleted
+        type: string
+    type: object
+  models.ErrorResponse400:
+    properties:
+      code:
+        example: 400
+        type: integer
+      error:
+        example: Bad request Error message
+        type: string
+    type: object
+  models.ErrorResponse404:
+    properties:
+      code:
+        example: 404
+        type: integer
+      error:
+        example: Not Found Error message
+        type: string
+    type: object
+  models.ErrorResponse500:
+    properties:
+      code:
+        example: 500
+        type: integer
+      error:
+        example: Internal Server Error message
+        type: string
+    type: object
+  models.ListBucketsResponse:
+    properties:
+      buckets:
+        items:
+          type: string
+        type: array
+    type: object
+  models.ListObjectsResponse:
+    properties:
+      bucket:
+        example: mybucket
+        type: string
+      objects:
+        items:
+          type: string
+        type: array
+    type: object
+  models.UploadFileResponse:
+    properties:
+      bucket:
+        example: mybucket
+        type: string
+      etag:
+        example: abcd1234
+        type: string
+      file:
+        example: file.txt
+        type: string
+      message:
+        example: File uploaded successfully
+        type: string
+      size:
+        example: 1234
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: ritu.priyadarshini@kluisz.ai
+    name: Ritu Priyadarshini
+  description: This is a sample server for object storage -- bucket and object manipulations
+  title: Object Storage API
+  version: "1.0"
+paths:
+  /bucket:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bucket name payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateBucketRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BucketResponseC'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse400'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: Create a new S3 bucket
+      tags:
+      - buckets
+  /bucket/{bucket}:
+    delete:
+      parameters:
+      - description: Bucket name
+        in: path
+        name: bucket
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status message
+          schema:
+            $ref: '#/definitions/models.BucketResponseD'
+        "500":
+          description: error message
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: Delete an existing S3 bucket
+      tags:
+      - buckets
+  /buckets:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListBucketsResponse'
+        "500":
+          description: error message
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: List all available S3 buckets
+      tags:
+      - buckets
+  /download/{bucket}/{key}:
+    get:
+      parameters:
+      - description: Bucket name
+        in: path
+        name: bucket
+        required: true
+        type: string
+      - description: Object key
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse404'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: Download a file from a bucket
+      tags:
+      - files
+  /objects/{bucket}:
+    get:
+      description: Lists all object names in a specified bucket
+      parameters:
+      - description: Bucket name
+        in: path
+        name: bucket
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListObjectsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: List objects in a bucket
+      tags:
+      - objects
+  /objects/{bucket}/{file}:
+    delete:
+      description: Deletes a specified file from a given bucket
+      parameters:
+      - description: Bucket name
+        in: path
+        name: bucket
+        required: true
+        type: string
+      - description: File name
+        in: path
+        name: file
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DeleteObjectResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: Delete a file from a bucket
+      tags:
+      - objects
+  /upload/{bucket}:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Bucket name
+        in: path
+        name: bucket
+        required: true
+        type: string
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UploadFileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse400'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse500'
+      summary: Upload a file to a given bucket
+      tags:
+      - files
+swagger: "2.0"

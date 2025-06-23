@@ -1,0 +1,432 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server for object storage -- bucket and object manipulations",
+        "title": "Object Storage API",
+        "contact": {
+            "name": "Ritu Priyadarshini",
+            "email": "ritu.priyadarshini@kluisz.ai"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/bucket": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "buckets"
+                ],
+                "summary": "Create a new S3 bucket",
+                "parameters": [
+                    {
+                        "description": "Bucket name payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateBucketRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.BucketResponseC"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse400"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/bucket/{bucket}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "buckets"
+                ],
+                "summary": "Delete an existing S3 bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status message",
+                        "schema": {
+                            "$ref": "#/definitions/models.BucketResponseD"
+                        }
+                    },
+                    "500": {
+                        "description": "error message",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/buckets": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "buckets"
+                ],
+                "summary": "List all available S3 buckets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListBucketsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "error message",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/download/{bucket}/{key}": {
+            "get": {
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Download a file from a bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Object key",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File downloaded",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse404"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/objects/{bucket}": {
+            "get": {
+                "description": "Lists all object names in a specified bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "objects"
+                ],
+                "summary": "List objects in a bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListObjectsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/objects/{bucket}/{file}": {
+            "delete": {
+                "description": "Deletes a specified file from a given bucket",
+                "tags": [
+                    "objects"
+                ],
+                "summary": "Delete a file from a bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "File name",
+                        "name": "file",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DeleteObjectResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/{bucket}": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload a file to a given bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UploadFileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse400"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse500"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.BucketResponseC": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "mybucket"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Bucket created"
+                }
+            }
+        },
+        "models.BucketResponseD": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "mybucket"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Bucket deleted"
+                }
+            }
+        },
+        "models.CreateBucketRequest": {
+            "type": "object",
+            "properties": {
+                "bucketName": {
+                    "type": "string",
+                    "example": "mybucket"
+                }
+            }
+        },
+        "models.DeleteObjectResponse": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "mybucket"
+                },
+                "file": {
+                    "type": "string",
+                    "example": "file.txt"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "File deleted"
+                }
+            }
+        },
+        "models.ErrorResponse400": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "error": {
+                    "type": "string",
+                    "example": "Bad request Error message"
+                }
+            }
+        },
+        "models.ErrorResponse404": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 404
+                },
+                "error": {
+                    "type": "string",
+                    "example": "Not Found Error message"
+                }
+            }
+        },
+        "models.ErrorResponse500": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "error": {
+                    "type": "string",
+                    "example": "Internal Server Error message"
+                }
+            }
+        },
+        "models.ListBucketsResponse": {
+            "type": "object",
+            "properties": {
+                "buckets": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.ListObjectsResponse": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "mybucket"
+                },
+                "objects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.UploadFileResponse": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "mybucket"
+                },
+                "etag": {
+                    "type": "string",
+                    "example": "abcd1234"
+                },
+                "file": {
+                    "type": "string",
+                    "example": "file.txt"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "File uploaded successfully"
+                },
+                "size": {
+                    "type": "integer",
+                    "example": 1234
+                }
+            }
+        }
+    }
+}
