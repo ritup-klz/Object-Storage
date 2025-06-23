@@ -11,13 +11,6 @@ import (
 	"io"
 )
 
-// func getMinioClient() (*minio.Client, error) {
-// 	return minio.New(config.Cfg.S3.Endpoint, &minio.Options{
-// 		Creds:  credentials.NewStaticV4(config.Cfg.S3.AccessKey, config.Cfg.S3.SecretKey, ""),
-// 		Secure: config.Cfg.S3.UseSSL,
-// 		Region: config.Cfg.S3.Region,
-// 	})
-// }
 
 // Upload File
 // @Summary Upload a file to a given bucket
